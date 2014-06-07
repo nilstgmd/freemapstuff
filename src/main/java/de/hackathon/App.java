@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.bson.types.ObjectId;
 
+import org.bson.types.ObjectId;
+
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -42,6 +44,23 @@ public class App {
 				}
 
 				return new BasicDBObject("results", results);
+			}
+		});
+		
+		Spark.get(new Route("/stuff/:id") {
+			@Override
+			public Object handle(final Request request, final Response response) {
+				final String jsId = request.params(":id");
+				DBObject whereQuery = null;
+				if (jsId != null && !jsId.equals(""))
+				{
+					whereQuery = new BasicDBObject();
+					final ObjectId jId = new ObjectId(jsId);
+					whereQuery.put("_id", jId);
+				}
+				DBCursor cursor = stuffCollection.find(whereQuery);
+				final DBObject result = cursor.next();
+				return result;
 			}
 		});
 
