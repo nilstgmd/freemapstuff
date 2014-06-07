@@ -9,7 +9,6 @@ import spark.Response;
 import spark.Route;
 import spark.Spark;
 
-import com.google.common.base.Optional;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
@@ -37,14 +36,14 @@ public class App {
 			public Object handle(final Request request, final Response response) {
 				
 				DBObject result;
-				final Optional<String> sortType = Optional.of(request.queryParams("sort"));
-				final Optional<String> tags = Optional.of(request.queryParams("filter"));
+				final String sortType = request.queryParams("sort");
+				final String tags = request.queryParams("filter");
 
-				if (sortType.isPresent()) {
-					if (sortType.get().equals("location")) {
+				if (sortType != null) {
+					if (sortType.equals("location")) {
 						
 						final String lat = request.queryParams("lat");
-						final String lon = request.queryParams("lon");
+						final String lon = request.queryParams("long");
 						final String distance = "10";
 
 						final FindQuery findQuery = new FindQuery(
@@ -62,9 +61,9 @@ public class App {
 						throw new IllegalArgumentException("Unsupported sort parameter");
 					}
 				}
-				else if(tags.isPresent()) {
+				else if(tags != null) {
 					
-					final List<String> tagsList = Arrays.asList(tags.get().split(","));
+					final List<String> tagsList = Arrays.asList(tags.split(","));
 					final FindQuery findQuery = new FindQuery(stuffCollection, tagsList);
 					
 					result = findQuery.execute();
