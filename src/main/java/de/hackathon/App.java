@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.types.ObjectId;
-
 import org.bson.types.ObjectId;
 
 import spark.Request;
@@ -19,6 +18,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.QueryBuilder;
 import com.mongodb.WriteResult;
 import com.mongodb.util.JSON;
 
@@ -35,9 +35,38 @@ public class App {
 		Spark.get(new Route("/stuff/") {
 			@Override
 			public Object handle(final Request request, final Response response) {
-
+				
 				final List<DBObject> results = new ArrayList<DBObject>();
-				final DBCursor resultCursor = stuffCollection.find();
+				DBCursor resultCursor = null;
+				//we check the attributes
+				String jsSortyBy = (String) request.queryParams("sort");
+				QueryBuilder query2 = new QueryBuilder();
+				if (jsSortyBy != null && !jsSortyBy.equals(""))
+				{
+					if (jsSortyBy.equals("location"))
+					{
+						// we want to search a location.
+						String jsLat = request.queryParams("lat");
+						String jsLong = request.queryParams("long");
+						query2.near(Double.parseDouble(jsLong), Double.parseDouble(jsLat));
+						DBObject whereQuery = new BasicDBObject();
+						whereQuery.putAll(query2.get());
+						resultCursor = stuffCollection.find(whereQuery);
+					}
+					else if (jsSortyBy.equals("created"))
+					{
+						
+						// we sort by the created date
+						BasicDBObject sortPredicate = new BasicDBObject();
+						sortPredicate.put("date", -1);
+
+						resultCursor = stuffCollection.find().sort(sortPredicate);
+					}
+				}
+				else
+				{
+					resultCursor = stuffCollection.find();
+				}
 
 				while (resultCursor.hasNext()) {
 					results.add(resultCursor.next());
@@ -84,6 +113,22 @@ public class App {
 						new BasicDBObject("_id", new ObjectId(request
 								.params(":id"))), updatedStuff);
 
+				return result;
+			}
+		});
+		
+		Spark.delete(new Route("/stuff/:id") {
+			@Override
+			public Object handle(final Request request, final Response response) {
+				final String jsId = request.params(":id");
+				DBObject whereQuery = null;
+				if (jsId != null && !jsId.equals(""))
+				{
+					whereQuery = new BasicDBObject();
+					final ObjectId jId = new ObjectId(jsId);
+					whereQuery.put("_id", jId);
+				}
+				final WriteResult result = stuffCollection.remove(whereQuery);
 				return result;
 			}
 		});
