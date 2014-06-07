@@ -1,16 +1,24 @@
 package de.hackathon;
 
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bson.types.ObjectId;
 
 import spark.Request;
 import spark.Response;
 import spark.Route;
 import spark.Spark;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.WriteResult;
+import com.mongodb.util.JSON;
 
 /**
  * Hello world!
@@ -25,8 +33,15 @@ public class App {
 		Spark.get(new Route("/stuff/") {
 			@Override
 			public Object handle(final Request request, final Response response) {
-				final DBObject result = stuffCollection.findOne();
-				return result;
+
+				final List<DBObject> results = new ArrayList<DBObject>();
+				final DBCursor resultCursor = stuffCollection.find();
+
+				while (resultCursor.hasNext()) {
+					results.add(resultCursor.next());
+				}
+
+				return new BasicDBObject("results", results);
 			}
 		});
 
@@ -34,7 +49,23 @@ public class App {
 			@Override
 			public Object handle(final Request request, final Response response) {
 
-				return "Hello World!";
+				final DBObject newStuff = (DBObject) JSON.parse(request.body());
+				final WriteResult result = stuffCollection.insert(newStuff);
+
+				return result;
+			}
+		});
+
+		Spark.put(new Route("/stuff/:id") {
+			@Override
+			public Object handle(final Request request, final Response response) {
+
+				final DBObject updatedStuff = (DBObject) JSON.parse(request.body());
+				final WriteResult result = stuffCollection.update(
+						new BasicDBObject("_id", new ObjectId(request
+								.params(":id"))), updatedStuff);
+
+				return result;
 			}
 		});
 	}
