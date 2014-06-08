@@ -4,6 +4,8 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.bson.types.ObjectId;
+
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -97,11 +99,15 @@ public class App {
 			@Override
 			public Object handle(final Request request, final Response response) {
 
+			    final ObjectId id = new ObjectId();
 				final DBObject insert = (DBObject) JSON.parse(request.body());
+				insert.put("_id", id);
 				final InsertQuery insertQuery = new InsertQuery(
 						stuffCollection, insert);
 
-				return insertQuery.execute();
+				response.header("Location", id.toString());
+				
+				return insertQuery.execute().getN();
 			}
 		});
 
@@ -113,7 +119,7 @@ public class App {
 				final DBObject update = (DBObject) JSON.parse(request.body());
 				final UpdateQuery putQuery = new UpdateQuery(stuffCollection, id, update);
 				
-				return putQuery.execute();
+				return putQuery.execute().getN();
 			}
 		});
 		
@@ -124,7 +130,7 @@ public class App {
 				final String id = request.params(":id");
 				final DeleteQuery deleteQuery = new DeleteQuery(stuffCollection, id);
 
-				return deleteQuery.execute();
+				return deleteQuery.execute().getN();
 			}
 		});
 	}
