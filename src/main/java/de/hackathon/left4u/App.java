@@ -19,6 +19,7 @@ import com.mongodb.util.JSON;
 
 import de.hackathon.left4u.queries.BrowseStuffQuery;
 import de.hackathon.left4u.queries.DeleteQuery;
+import de.hackathon.left4u.queries.EnsureLocationIndexQuery;
 import de.hackathon.left4u.queries.GetStuffByIdQuery;
 import de.hackathon.left4u.queries.InsertQuery;
 import de.hackathon.left4u.queries.UpdateQuery;
@@ -33,8 +34,15 @@ import de.hackathon.left4u.queries.UpdateQuery;
 public class App {
 	public static void main(final String[] args) throws UnknownHostException {
 		final MongoClient mongo = new MongoClient();
-		final DB mongoDb = mongo.getDB("freestuffmap");
+		final DB mongoDb = mongo.getDB("left4u");
+		final boolean firstStart = !mongoDb.collectionExists("stuff");
 		final DBCollection stuffCollection = mongoDb.getCollection("stuff");
+
+		if (firstStart) {
+			final EnsureLocationIndexQuery ensureLocationIndexQuery = new EnsureLocationIndexQuery(
+					stuffCollection);
+			ensureLocationIndexQuery.execute();
+		}
 
 		Spark.get(new Route("/stuff/") {
 			@Override
