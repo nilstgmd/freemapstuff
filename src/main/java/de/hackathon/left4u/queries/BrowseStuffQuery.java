@@ -12,7 +12,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
-public class FindQuery implements IQuery<DBObject> {
+public class BrowseStuffQuery implements IQuery<DBObject> {
 
 	private final DBCollection collection;
 	private final boolean getLatestOnly;
@@ -21,9 +21,9 @@ public class FindQuery implements IQuery<DBObject> {
 	private final Optional<Double> distance;
 	private final Optional<List<String>> tags;
 
-	public FindQuery(final DBCollection collection, final boolean getLatestOnly) {
+	public BrowseStuffQuery(final DBCollection collection, final boolean getLatestOnly) {
 
-		Preconditions.checkArgument(collection != null, "collection == null");
+		Preconditions.checkNotNull(collection != null, "collection == null");
 
 		this.collection = collection;
 		this.getLatestOnly = getLatestOnly;
@@ -34,13 +34,13 @@ public class FindQuery implements IQuery<DBObject> {
 		this.tags = Optional.absent();
 	}
 
-	public FindQuery(final DBCollection collection, final String lat,
+	public BrowseStuffQuery(final DBCollection collection, final String lat,
 			final String lon, final String distance) {
 
-		Preconditions.checkArgument(collection != null, "collection == null");
-		Preconditions.checkArgument(lat != null, "lat == null");
-		Preconditions.checkArgument(lon != null, "lon == null");
-		Preconditions.checkArgument(distance != null, "distance == null");
+		Preconditions.checkNotNull(collection != null, "collection == null");
+		Preconditions.checkNotNull(lat != null, "lat == null");
+		Preconditions.checkNotNull(lon != null, "lon == null");
+		Preconditions.checkNotNull(distance != null, "distance == null");
 
 		this.collection = collection;
 		this.lat = Optional.of(Double.parseDouble(lat));
@@ -51,10 +51,10 @@ public class FindQuery implements IQuery<DBObject> {
 		this.tags = Optional.absent();
 	}
 
-	public FindQuery(final DBCollection collection, final List<String> tags) {
+	public BrowseStuffQuery(final DBCollection collection, final List<String> tags) {
 
-		Preconditions.checkArgument(collection != null, "collection == null");
-		Preconditions.checkArgument(tags != null, "tags == null");
+		Preconditions.checkNotNull(collection != null, "collection == null");
+		Preconditions.checkNotNull(tags != null, "tags == null");
 
 		this.collection = collection;
 		this.tags = Optional.of(tags);

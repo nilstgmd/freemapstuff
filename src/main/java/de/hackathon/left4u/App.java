@@ -16,8 +16,8 @@ import com.mongodb.MongoClient;
 import com.mongodb.util.JSON;
 
 import de.hackathon.left4u.queries.DeleteQuery;
-import de.hackathon.left4u.queries.FindOneQuery;
-import de.hackathon.left4u.queries.FindQuery;
+import de.hackathon.left4u.queries.GetStuffByIdQuery;
+import de.hackathon.left4u.queries.BrowseStuffQuery;
 import de.hackathon.left4u.queries.InsertQuery;
 import de.hackathon.left4u.queries.UpdateQuery;
 
@@ -46,14 +46,14 @@ public class App {
 						final String lon = request.queryParams("long");
 						final String distance = "10";
 
-						final FindQuery findQuery = new FindQuery(
+						final BrowseStuffQuery findQuery = new BrowseStuffQuery(
 								stuffCollection, lat, lon, distance);
 
 						result = findQuery.execute();
 					}
 					else if (sortType.equals("created")) {
 						
-						final FindQuery findQuery = new FindQuery(stuffCollection, true);
+						final BrowseStuffQuery findQuery = new BrowseStuffQuery(stuffCollection, true);
 
 						result = findQuery.execute();
 					}
@@ -64,13 +64,13 @@ public class App {
 				else if(tags != null) {
 					
 					final List<String> tagsList = Arrays.asList(tags.split(","));
-					final FindQuery findQuery = new FindQuery(stuffCollection, tagsList);
+					final BrowseStuffQuery findQuery = new BrowseStuffQuery(stuffCollection, tagsList);
 					
 					result = findQuery.execute();
 				}
 				else {
 					
-					final FindQuery findQuery = new FindQuery(stuffCollection, false);
+					final BrowseStuffQuery findQuery = new BrowseStuffQuery(stuffCollection, false);
 					
 					result = findQuery.execute();
 				}
@@ -83,8 +83,8 @@ public class App {
 			@Override
 			public Object handle(final Request request, final Response response) {
 
-				final String _id = request.params(":id");
-				final FindOneQuery findQuery = new FindOneQuery(stuffCollection, _id);
+				final String id = request.params(":id");
+				final GetStuffByIdQuery findQuery = new GetStuffByIdQuery(stuffCollection, id);
 
 				return findQuery.execute();
 			}
@@ -106,9 +106,9 @@ public class App {
 			@Override
 			public Object handle(final Request request, final Response response) {
 
-				final String _id = request.params(":id");
+				final String id = request.params(":id");
 				final DBObject update = (DBObject) JSON.parse(request.body());
-				final UpdateQuery putQuery = new UpdateQuery(stuffCollection, _id, update);
+				final UpdateQuery putQuery = new UpdateQuery(stuffCollection, id, update);
 				
 				return putQuery.execute();
 			}
@@ -118,8 +118,8 @@ public class App {
 			@Override
 			public Object handle(final Request request, final Response response) {
 				
-				final String _id = request.params(":id");
-				final DeleteQuery deleteQuery = new DeleteQuery(stuffCollection, _id);
+				final String id = request.params(":id");
+				final DeleteQuery deleteQuery = new DeleteQuery(stuffCollection, id);
 
 				return deleteQuery.execute();
 			}

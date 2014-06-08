@@ -11,20 +11,20 @@ import com.mongodb.WriteResult;
 public class DeleteQuery implements IQuery<WriteResult> {
 
 	private final DBCollection collection;
-	private final ObjectId _id;
+	private final ObjectId id;
 
-	public DeleteQuery(final DBCollection collection, final String _id) {
+	public DeleteQuery(final DBCollection collection, final String id) {
 
-		Preconditions.checkArgument(collection != null, "collection == null");
-		Preconditions.checkArgument(_id != null, "_id == null");
+		Preconditions.checkNotNull(collection != null, "collection == null");
+		Preconditions.checkNotNull(id != null, "_id == null");
 
 		this.collection = collection;
-		this._id = new ObjectId(_id);
+		this.id = new ObjectId(id);
 	}
 
 	public WriteResult execute() {
 
-		final DBObject deleteQuery = new BasicDBObject("_id", _id);
+		final DBObject deleteQuery = new BasicDBObject("_id", id);
 
 		return collection.remove(deleteQuery);
 	}

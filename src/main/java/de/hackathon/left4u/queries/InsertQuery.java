@@ -12,8 +12,8 @@ public class InsertQuery implements IQuery<WriteResult> {
 
 	public InsertQuery(final DBCollection collection, final DBObject insert) {
 
-		Preconditions.checkArgument(collection != null, "collection == null");
-		Preconditions.checkArgument(insert != null, "insert == null");
+		Preconditions.checkNotNull(collection != null, "collection == null");
+		Preconditions.checkNotNull(insert != null, "insert == null");
 
 		this.collection = collection;
 		this.insert = insert;
