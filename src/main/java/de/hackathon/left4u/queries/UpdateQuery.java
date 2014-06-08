@@ -8,6 +8,9 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.WriteResult;
 
+/**
+ * @author <a href="mailto:marhoffm@adobe.com">Marvin Hoffmann</a>
+ */
 public class UpdateQuery implements IQuery<WriteResult> {
 
 	private final DBCollection collection;

@@ -12,6 +12,9 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
+/**
+ * @author <a href="mailto:marhoffm@adobe.com">Marvin Hoffmann</a>
+ */
 public class BrowseStuffQuery implements IQuery<DBObject> {
 
 	private final DBCollection collection;

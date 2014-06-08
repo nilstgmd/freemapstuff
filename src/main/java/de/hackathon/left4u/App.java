@@ -15,15 +15,18 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.util.JSON;
 
+import de.hackathon.left4u.queries.BrowseStuffQuery;
 import de.hackathon.left4u.queries.DeleteQuery;
 import de.hackathon.left4u.queries.GetStuffByIdQuery;
-import de.hackathon.left4u.queries.BrowseStuffQuery;
 import de.hackathon.left4u.queries.InsertQuery;
 import de.hackathon.left4u.queries.UpdateQuery;
 
 /**
- * Hello world!
+ * Left4u server application
  * 
+ * @author <a href="https://github.com/Age15990">Ann-Katrin Arning</a>
+ * @author <a href="https://github.com/Desi252">Desiree Özgün</a>
+ * @author <a href="mailto:marhoffm@adobe.com">Marvin Hoffmann</a>
  */
 public class App {
 	public static void main(final String[] args) throws UnknownHostException {
